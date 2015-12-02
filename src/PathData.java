@@ -9,6 +9,11 @@ public class PathData
     String [][] parent;
     int width,height;
     Position source;
+
+    int xMoves[] = {0,0,1,-1};
+    int yMoves[] = {1,-1,0,0};
+    String directions[] = {"S", "N", "E", "W"};
+
     public PathData(int[][] matrix,Position source)
     {
         this.source = source;
@@ -45,7 +50,12 @@ public class PathData
             else
                 break;
         }
-
+        if(path.equals(""))
+        {
+            for(int i=0;i<xMoves.length;i++)
+                if(!parent[source.x + xMoves[i]][source.y + yMoves[i]].equals(""))
+                    return parent[source.x + xMoves[i]][source.y + yMoves[i]];
+        }
         return new StringBuilder(path).reverse().toString();
     }
 }

@@ -139,7 +139,7 @@ public class SearchAlgorithms
         }
     }
 
-    public PathData BFS(Position source,int depthLimit)
+    public PathData BFS(Position source,int nodesLimit)
     {
 
         PathData pathData = new PathData(worldMatrix,source);
@@ -151,7 +151,7 @@ public class SearchAlgorithms
         {
             current = bfsQ.remove();
             bfsNodes++;
-            if(pathData.distance[current.x][current.y] > depthLimit)
+            if(bfsNodes > nodesLimit)
                 break;
 
             for(int i=0;i<xMoves.length;i++)
