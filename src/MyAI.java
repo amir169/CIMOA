@@ -32,9 +32,9 @@ public class MyAI implements PlayerAI
             if(path=="") {
                 printheuMat();
                 System.out.println();
-//                path=searchAlgorithms.BFS(Position.getPos(mc.getPos()),100).toPath(new Position(9,9));
+//                path=searchAlgorithms.BFS(Position.getPos(mc.getPos()),100).toPath(new Position(4,9));
 //                System.err.println("BFSNODES: " + searchAlgorithms.bfsNodes);
-                path = searchAlgorithms.LRTAStar(heuristics, mc.getPos(), new Vector2D(7, 0)).toPath(new Position(7, 0));
+                path = searchAlgorithms.LRTAStar(heuristics, mc.getPos(), new Vector2D(4, 9)).toPath(new Position(4, 9));
                 System.err.println("ASTARNODES: " + searchAlgorithms.AStarNodes);
                 System.err.println("path: "+path);
                 printheuMat();

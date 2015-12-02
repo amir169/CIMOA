@@ -22,7 +22,7 @@ public class SearchAlgorithms
 
     public SearchAlgorithms(int[][] worldMatrix,int zarib,int zarib2) {
         this.worldMatrix = worldMatrix;
-        AStarNodes = 0;
+
         bfsNodes = 0;
         this.zarib=zarib;
         this.zarib2=zarib2;
@@ -64,8 +64,10 @@ public class SearchAlgorithms
         return null;
     }
 
-    public PathData LRTAStar(Heuristics heuristic,Vector2D src,Vector2D dst)
+    public PathData LRTAStar(Heuristics heuristic,Vector2D src,Vector2D dst,int nodeLimit)
     {
+        boolean findDest=false;
+        AStarNodes = 0;
         PathData pathData= new PathData(worldMatrix,Position.getPos(src));
         Comparator<Vector2D> LRTAStarComp=new Comparator<Vector2D>() {
 
@@ -92,11 +94,11 @@ public class SearchAlgorithms
         };
         PriorityQueue<Vector2D> LRTAStarQ=new PriorityQueue<>(LRTAStarComp);
         LRTAStarQ.add(src);
-        while (!LRTAStarQ.isEmpty()){
+        while (!LRTAStarQ.isEmpty() && AStarNodes < nodeLimit){
 
             AStarNodes++;
             Vector2D current=LRTAStarQ.remove();
-            if(current.equals(dst))break;
+            if(current.equals(dst)){findDest=true; break;}
             for (int i = 0; i < 4; i++) {
                 Vector2D child=new Vector2D(current.x+xMoves[i],current.y+yMoves[i]);
                 if(passable(child)){
