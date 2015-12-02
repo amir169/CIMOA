@@ -26,7 +26,7 @@ public class PathData
         for(int i=0;i<width;i++)
             for(int j=0;j<height;j++)
             {
-                distance[i][j] = Integer.MAX_VALUE;
+                distance[i][j] = 1000;
                 parent[i][j] = "";
             }
 

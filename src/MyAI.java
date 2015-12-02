@@ -7,6 +7,7 @@ import core.math.Vector2D;
 import jdk.nashorn.internal.objects.NativeUint16Array;
 import server.Settings;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 /**
@@ -18,36 +19,46 @@ public class MyAI implements PlayerAI
     String path = "";
     boolean first = true;
     int turnNumber = 0;
+    int zaribGetDistanceLRTAstar=7;
+    int zaribMatrixCellLRTAstar=1;
+    int LRAStarINF=50;
+    int[][] goldMatrix;
     @Override
 
     public void doTurn(WorldModel wm)
     {
-        SearchAlgorithms searchAlgorithms=new SearchAlgorithms(wm.cloneTerrain(),7,1);
-
-        System.out.println();
+        SearchAlgorithms searchAlgorithms=new SearchAlgorithms(wm.cloneTerrain(),zaribGetDistanceLRTAstar,zaribMatrixCellLRTAstar);//a
         turnNumber++;
-        if(first)
-        {
-            heuristics=new Heuristics(wm.cloneTerrain(),50);
+        if(first){
+            //peyda kardan path behine ta castle harif
+            heuristics=new Heuristics(wm.cloneTerrain(),LRAStarINF);
             first = false;
         }
-        Unit c = wm.self.agents.get(0);
-        Unit mc=(wm.self.agents.size()>1)?wm.self.agents.get(1) : null;
+        Unit myCastle = wm.self.agents.get(0);
 
-        if(mc!= null) {
-            if(path.equals("")) {
-       //         printheuMat();
-       //         System.out.println();
-//                path=searchAlgorithms.BFS(Position.getPos(mc.getPos()),100).toPath(new Position(4,9));
-//                System.err.println("BFSNODES: " + searchAlgorithms.bfsNodes);
-//                path = searchAlgorithms.LRTAStar(heuristics, mc.getPos(), new Vector2D(4, 9),100).toPath(new Position(4, 9));
-//                System.err.println("ASTARNODES: " + searchAlgorithms.AStarNodes);
-                  path = searchAlgorithms.hillClimbing(heuristics,Position.getPos(mc.getPos()),turnNumber);
-//                  printhillMat();
-        //        System.err.println("path: "+path);
-        //        printheuMat();
-            }
+        if(turnNumber%2==0){
+            myCastle.make(Direction.E,UnitType.WORKER);
         }
+
+
+//        initilaUnitMatrixAndData(wm);
+        initialGoldMatrix(wm);
+//        determineLimits();
+//        turnDesicion();
+
+
+        ArrayList<ChristopherWorker> workers=new ArrayList<>();
+        for (int i = 1; i < wm.self.agents.size(); i++) {
+            if(wm.self.agents.get(i).getType()==UnitType.WORKER)
+                workers.add(new ChristopherWorker(wm.self.agents.get(i),wm,null,goldMatrix,searchAlgorithms,heuristics,turnNumber));
+
+        }
+
+        for (int i = 0; i < workers.size(); i++) {
+            workers.get(i).setTask();
+            workers.get(i).doItsJob();
+        }
+/*
         if(!path.equals("")){
             if(path.charAt(0) == 'S' && mc != null)
                 mc.move(Direction.N);
@@ -58,12 +69,25 @@ public class MyAI implements PlayerAI
             else if(path.charAt(0) == 'E' && mc != null)
                 mc.move(Direction.E);
         }
-
         if(!path.equals("")) {
             path = path.substring(1);
         }
-        if(wm.self.agents.size()<2);
-            c.make(Direction.E,UnitType.WORKER);
+*/
+
+
+    }
+
+    private void initialGoldMatrix(WorldModel wm) {
+        goldMatrix=new int[wm.cloneTerrain().length][wm.cloneTerrain()[0].length];
+        for (int i = 0; i < wm.cloneTerrain().length; i++) {
+            for (int j = 0; j < wm.cloneTerrain()[0].length; j++) {
+                goldMatrix[i][j]=0;
+            }
+        }
+        for (int i = 0; i < wm.goldMines.size(); i++) {
+            if(wm.goldMines.get(i).goldAmount>0)
+                goldMatrix[wm.goldMines.get(i).pos.x][wm.goldMines.get(i).pos.y]=1;
+        }
     }
 
     private void printheuMat() {

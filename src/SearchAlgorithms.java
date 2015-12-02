@@ -30,7 +30,7 @@ public class SearchAlgorithms
 
     private boolean passable(int x,int y)
     {
-        if(x < 0 || y < 0 || x >= worldMatrix.length || y >= worldMatrix[0].length)
+        if(x < 0 || y < 0 || x >= worldMatrix.length || y >= worldMatrix[0].length  || (x==0 && y==0))
             return false;
 
         if(worldMatrix[x][y] != 0)
@@ -43,7 +43,7 @@ public class SearchAlgorithms
     {
         int x=v.x;
         int y=v.y;
-        if(x < 0 || y < 0 || x >= worldMatrix.length || y >= worldMatrix[0].length)
+        if(x < 0 || y < 0 || x >= worldMatrix.length || y >= worldMatrix[0].length || (x==0 && y==0))
             return false;
 
         if(worldMatrix[x][y] != 0)
