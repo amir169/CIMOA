@@ -8,17 +8,22 @@ import java.util.Queue;
  */
 public class SearchAlgorithms
 {
+    int[][] worldMatrix;
     int xMoves[] = {0,0,1,-1};
     int yMoves[] = {1,-1,0,0};
     String directions[] = {"S", "N", "E", "W"};
-    private Queue<Position> Q = new LinkedList<Position>();
+    private Queue<Position> bfsQ = new LinkedList<Position>();
 
-    private boolean passable(int[][] matrix,int x,int y)
+    public SearchAlgorithms(int[][] worldMatrix) {
+        this.worldMatrix = worldMatrix;
+    }
+
+    private boolean passable(int x,int y)
     {
-        if(x < 0 || y < 0 || x >= matrix.length || y >= matrix[0].length)
+        if(x < 0 || y < 0 || x >= worldMatrix.length || y >= worldMatrix[0].length)
             return false;
 
-        if(matrix[x][y] != 0)
+        if(worldMatrix[x][y] != 0)
             return false;
 
         return true;
@@ -36,17 +41,17 @@ public class SearchAlgorithms
         return null;
     }
 
-    public PathData BFS(int[][] matrix,Position source)
+    public PathData BFS(Position source)
     {
 
-        PathData pathData = new PathData(matrix,source);
-        Q.add(source);
+        PathData pathData = new PathData(worldMatrix,source);
+        bfsQ.add(source);
         Position current;
         int x,y;
 
-        while(!Q.isEmpty())
+        while(!bfsQ.isEmpty())
         {
-            current = Q.remove();
+            current = bfsQ.remove();
 
             for(int i=0;i<xMoves.length;i++)
             {
@@ -54,11 +59,11 @@ public class SearchAlgorithms
                 x = current.x + xMoves[i];
                 y = current.y + yMoves[i];
 
-                if (passable(matrix, x, y))
+                if (passable(x, y))
                 {
                     if(pathData.distance[x][y] == 1000)
                     {
-                        Q.add(new Position(x, y));
+                        bfsQ.add(new Position(x, y));
                         pathData.distance[x][y] = pathData.distance[current.x][current.y] + 1;
                         pathData.parent[x][y] = directions[i];
                     }
