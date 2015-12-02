@@ -1,3 +1,5 @@
+import core.math.Vector2D;
+
 /**
  * Created by Amir Shams on 12/1/2015.
  */
@@ -15,5 +17,10 @@ public class Position
         if(this.x == that.x && this.y == that.y)
             return true;
         return false;
+    }
+
+    public static Position getPos(Vector2D v){
+        Position p=new Position(v.x,v.y);
+        return p;
     }
 }

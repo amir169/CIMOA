@@ -1,6 +1,8 @@
 import core.math.Vector2D;
 
+import java.util.Comparator;
 import java.util.LinkedList;
+import java.util.PriorityQueue;
 import java.util.Queue;
 
 /**
@@ -40,6 +42,33 @@ public class SearchAlgorithms
         //needs implementations
         return null;
     }
+
+    public PathData LRTAStar(Heuristics heuristic,Vector2D src,Vector2D dst)
+    {
+        PathData pathData= new PathData(worldMatrix,Position.getPos(src));
+
+        Comparator<Vector2D> LRTAStarComp=new Comparator<Vector2D>() {
+
+            int h(Vector2D v){
+                int count=0;
+                for (int i = 0; i < 4; i++) {
+                    count+=heuristic.LRTAStarmatrix[v.x+xMoves[i] ][v.y+yMoves[i] ];
+                }
+                heuristic.LRTAStarmatrix[v.x][v.y]= count/4;
+                return (count/4)+v.getDistance(dst);
+            }
+
+            @Override
+            public int compare(Vector2D o1, Vector2D o2) {
+                int f1=h(o1)+pathData.distance[o1.x][o1.y];
+                int f2=h(o2)+pathData.distance[o2.x][o2.y];
+                return f2-f1;//must test;
+            }
+        };
+        PriorityQueue<Vector2D> LRTAStarQ=new PriorityQueue<>(LRTAStarComp);
+        return null;
+    }
+
 
     public PathData BFS(Position source,int depthLimit)
     {
