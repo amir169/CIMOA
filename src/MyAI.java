@@ -18,90 +18,15 @@ public class MyAI implements PlayerAI
     {
 
 
-        Unit c = wm.self.agents.get(0);
-//        wm.self.agents.get(0).move();
+        Unit myCastle = wm.self.agents.get(0);
+
         Random r= new Random();
-//        int k = 1; //<< r.nextInt(32);
-        SearchAlgorithms searchAlgorithms = new SearchAlgorithms();
-
-
-//        for(int i=0;i<wm.getWidth();i++)
-//            for(int j=0;j<wm.getHeight();j++)
-//                System.out.println(wm.cloneTerrain()[i][j]);
-
-
-        String path = "";
-        Unit mc = null;
-        if(wm.self.agents.size() == 2 && path == "")
-        {
-            mc = wm.self.agents.get(1);
-            PathData pathData = searchAlgorithms.BFS(wm.cloneTerrain(), new Position(c.getPos().x, c.getPos().y));
-            path = pathData.toPath(new Position(4,4));
-        }
-
-
-
-
-//        for(int i = 1 ; i < wm.self.agents.size() ; i++)
-//        {
-//            mc = wm.self.agents.get(i);
-//            double chance = r.nextDouble();
-//            if(chance < 0.25)
-//                mc.move(Direction.N);
-//            else if(chance < 0.5)
-//                mc.move(Direction.S);
-//            else if(chance < 0.75)
-//                mc.move(Direction.E);
-//            else
-//                mc.move(Direction.W);
-//        }
-
-//        System.out.println(path);
-//        System.out.println(wm.self.agents.size());
-
-//        System.out.println(path.length());
-//        if(path.length() > 0)
-//            System.out.println(path.charAt(0));
-//        System.out.println(path.charAt(0));
-
-//        if(wm.self.agents.size() > 1)
-//            System.err.println("mc: " + mc.toString());
-
-        if(path != "")
-        {
-            if(path.charAt(0) == 'S' && mc != null)
-            {
-
-                mc.move(Direction.S);
-                path = path.substring(1);
-            }
-            else if(path.charAt(0) == 'N' && mc != null)
-            {
-
-                mc.move(Direction.N);
-                path = path.substring(1);
-            }
-            else if(path.charAt(0) == 'W' && mc != null)
-            {
-                mc.move(Direction.W);
-
-                path = path.substring(1);
-            }
-            else if(path.charAt(0) == 'E' && mc != null)
-            {
-                mc.move(Direction.E);
-
-                path = path.substring(1);
-            }
-        }
-
-        System.out.println("path: "+path);
         if(r.nextDouble() > 0.5)
-            c.make(Direction.E, UnitType.WORKER);
+            myCastle.make(Direction.E, UnitType.WORKER);
         else
-            c.make(Direction.W,UnitType.WORKER);
+            myCastle.make(Direction.W,UnitType.WORKER);
 
         if(r.nextDouble() > 0.5)
-            c.attack(Direction.E);
+            myCastle.attack(Direction.E);
     }
 }
