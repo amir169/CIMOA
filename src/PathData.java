@@ -40,8 +40,10 @@ public class PathData
                 destination = new Position(destination.x,destination.y + 1);
             else if(move == "W")
                 destination = new Position(destination.x + 1,destination.y);
-            else
+            else if(move == "E")
                 destination = new Position(destination.x - 1,destination.y);
+            else
+                break;
         }
 
         return new StringBuilder(path).reverse().toString();
