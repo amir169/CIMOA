@@ -92,12 +92,20 @@ public class SearchAlgorithms
                 return f1-f2;//must test;
             }
         };
+        int minF=LRTAStarH(heuristic,src,dst);
+        Vector2D minFV=src;
         PriorityQueue<Vector2D> LRTAStarQ=new PriorityQueue<>(LRTAStarComp);
         LRTAStarQ.add(src);
         while (!LRTAStarQ.isEmpty() && AStarNodes < nodeLimit){
 
             AStarNodes++;
             Vector2D current=LRTAStarQ.remove();
+
+            if(LRTAStarH(heuristic,current,dst)+pathData.distance[current.x][current.y]<=minF){
+               minF=LRTAStarH(heuristic,src,dst)+pathData.distance[current.x][current.y];
+               minFV=current;
+            }
+
             if(current.equals(dst)){findDest=true; break;}
             for (int i = 0; i < 4; i++) {
                 Vector2D child=new Vector2D(current.x+xMoves[i],current.y+yMoves[i]);
@@ -113,7 +121,12 @@ public class SearchAlgorithms
             }
         }
 
-
+        if(findDest)
+            pathData.dest=Position.getPos(dst);
+        else
+        {
+            pathData.dest=Position.getPos(minFV);
+        }
         return pathData;
     }
 
