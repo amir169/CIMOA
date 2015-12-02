@@ -10,6 +10,8 @@ import java.util.Queue;
  */
 public class SearchAlgorithms
 {
+    int bfsNodes;
+    int AStarNodes;
     int[][] worldMatrix;
     int xMoves[] = {0,0,1,-1};
     int yMoves[] = {1,-1,0,0};
@@ -18,6 +20,8 @@ public class SearchAlgorithms
 
     public SearchAlgorithms(int[][] worldMatrix) {
         this.worldMatrix = worldMatrix;
+        AStarNodes = 0;
+        bfsNodes = 0;
     }
 
     private boolean passable(int x,int y)
@@ -72,6 +76,7 @@ public class SearchAlgorithms
                 heuristic.LRTAStarmatrix[v.x][v.y]= count/4;
                 if(count<0)return v.getDistance(dst);
                 return (count/4)+v.getDistance(dst);
+               // return v.getDistance(dst);
             }
 
             @Override
@@ -84,6 +89,7 @@ public class SearchAlgorithms
         PriorityQueue<Vector2D> LRTAStarQ=new PriorityQueue<>(LRTAStarComp);
         LRTAStarQ.add(src);
         while (!LRTAStarQ.isEmpty()){
+            AStarNodes++;
             Vector2D current=LRTAStarQ.remove();
             if(current.equals(dst))break;
             for (int i = 0; i < 4; i++) {
@@ -128,7 +134,7 @@ public class SearchAlgorithms
         while(!bfsQ.isEmpty())
         {
             current = bfsQ.remove();
-
+            bfsNodes++;
             if(pathData.distance[current.x][current.y] > depthLimit)
                 break;
 

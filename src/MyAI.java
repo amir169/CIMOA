@@ -14,7 +14,7 @@ import java.util.Random;
  */
 public class MyAI implements PlayerAI
 {
-
+    Heuristics heuristics;//=new Heuristics(wm.cloneTerrain(),100);
     String path = "";
     boolean first = true;
     @Override
@@ -22,19 +22,23 @@ public class MyAI implements PlayerAI
     public void doTurn(WorldModel wm)
     {
         SearchAlgorithms searchAlgorithms=new SearchAlgorithms(wm.cloneTerrain());
-        Heuristics heuristics=new Heuristics(wm.cloneTerrain(),100);
+        heuristics=new Heuristics(wm.cloneTerrain(),100);
 
         Unit c = wm.self.agents.get(0);
         Unit mc=(wm.self.agents.size()>1)?wm.self.agents.get(1) : null;
 
         if(mc!= null) {
             if(path=="") {
-                //path=searchAlgorithms.BFS(Position.getPos(mc.getPos()),100).toPath(new Position(9,9));
+                printheuMat();
+                System.out.println();
+//                path=searchAlgorithms.BFS(Position.getPos(mc.getPos()),100).toPath(new Position(9,9));
+//                System.err.println("BFSNODES: " + searchAlgorithms.bfsNodes);
                 path = searchAlgorithms.LRTAStar(heuristics, mc.getPos(), new Vector2D(9, 9)).toPath(new Position(9, 9));
+                System.err.println("ASTARNODES: " + searchAlgorithms.AStarNodes);
+                System.err.println("path: "+path);
+                printheuMat();
             }
-            System.err.println("mc: "+ mc);
         }
-        System.err.println("path: "+path);
         if(!path.equals("")){
             if(path.charAt(0) == 'S' && mc != null)
                 mc.move(Direction.N);
@@ -51,6 +55,15 @@ public class MyAI implements PlayerAI
         }
         if(wm.self.agents.size()<2);
             c.make(Direction.E,UnitType.WORKER);
-        System.err.println("agentsize: "+wm.self.agents.size());
+    }
+
+    private void printheuMat() {
+        int m[][]=heuristics.LRTAStarmatrix;
+        for (int i = 0; i < m.length; i++) {
+            for (int j = 0; j < m[0].length; j++) {
+                System.out.print(m[i][j]+" ");
+            }
+            System.out.println();
+        }
     }
 }
