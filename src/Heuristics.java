@@ -5,6 +5,8 @@ public class Heuristics
 {
     int[][] worldMatrix;
     int[][] LRTAStarmatrix;
+    double[][] darknessMatrix;
+    double[][] lastSeenMatrix;
     int LRTAStarINF;
 
     public void setWorldMatrix(int[][] worldMatrix) {
@@ -16,12 +18,13 @@ public class Heuristics
         this.worldMatrix = worldMatrix;
         LRTAStarmatrix=new int[worldMatrix.length][worldMatrix[0].length];
         initialLRTAStarMatrx();
+        initialDarknessMatrix();
+        initialLastSeenMatrix();
+
     }
 
     //must call in constructor
     void initialLRTAStarMatrx(){
-      //  printuMat();
-        System.out.println();
         for (int i = 0; i < worldMatrix.length; i++) {
             for (int j = 0; j < worldMatrix[0].length; j++) {
                 if(worldMatrix[i][j]!=0)
@@ -30,14 +33,22 @@ public class Heuristics
                     LRTAStarmatrix[i][j]= 0-LRTAStarINF;
             }
         }
+
     }
-    private void printuMat() {
-        int m[][]=worldMatrix;
-        for (int i = 0; i < m.length; i++) {
-            for (int j = 0; j < m[0].length; j++) {
-                System.out.print(m[j][i]+" ");
-            }
-            System.out.println();
-        }
+
+    void initialDarknessMatrix()
+    {
+        darknessMatrix = new double[worldMatrix.length][worldMatrix[0].length];
+        for(int i=0;i<worldMatrix.length;i++)
+            for(int j=0;j<worldMatrix[0].length;j++)
+                darknessMatrix[i][j] = 0.0;
+    }
+
+    void initialLastSeenMatrix()
+    {
+        lastSeenMatrix = new double[worldMatrix.length][worldMatrix[0].length];
+        for(int i=0;i<worldMatrix.length;i++)
+            for(int j=0;j<worldMatrix[0].length;j++)
+                lastSeenMatrix[i][j] = 1;
     }
 }
