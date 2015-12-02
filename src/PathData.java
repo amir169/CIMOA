@@ -9,6 +9,7 @@ public class PathData
     String [][] parent;
     int width,height;
     Position source;
+    Position dest;
 
     int xMoves[] = {0,0,1,-1};
     int yMoves[] = {1,-1,0,0};
@@ -58,4 +59,29 @@ public class PathData
         }
         return new StringBuilder(path).reverse().toString();
     }
+
+    public String toPath()
+    {
+        Position destination=dest;
+        String path = "";
+
+        while(!destination.equals(source))
+        {
+            String move = parent[destination.x][destination.y];
+            path += move;
+            if(move == "S")
+                destination = new Position(destination.x,destination.y - 1);
+            else if(move == "N")
+                destination = new Position(destination.x,destination.y + 1);
+            else if(move == "W")
+                destination = new Position(destination.x + 1,destination.y);
+            else if(move == "E")
+                destination = new Position(destination.x - 1,destination.y);
+            else
+                break;
+        }
+
+        return new StringBuilder(path).reverse().toString();
+    }
+
 }
