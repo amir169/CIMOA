@@ -10,6 +10,8 @@ import java.util.Queue;
  */
 public class SearchAlgorithms
 {
+    int zarib;
+    int zarib2;
     int bfsNodes;
     int AStarNodes;
     int[][] worldMatrix;
@@ -18,10 +20,12 @@ public class SearchAlgorithms
     String directions[] = {"S", "N", "E", "W"};
     private Queue<Position> bfsQ = new LinkedList<Position>();
 
-    public SearchAlgorithms(int[][] worldMatrix) {
+    public SearchAlgorithms(int[][] worldMatrix,int zarib,int zarib2) {
         this.worldMatrix = worldMatrix;
         AStarNodes = 0;
         bfsNodes = 0;
+        this.zarib=zarib;
+        this.zarib2=zarib2;
     }
 
     private boolean passable(int x,int y)
@@ -71,12 +75,12 @@ public class SearchAlgorithms
                     if(passable(v.x+xMoves[i],v.y+yMoves[i]) )
                         count+=heuristic.LRTAStarmatrix[v.x+xMoves[i] ][v.y+yMoves[i] ];
                     else
-                        count+= (0 - heuristic.LRTAStarINF);
+                        count+= heuristic.LRTAStarINF;
                 }
-                heuristic.LRTAStarmatrix[v.x][v.y]= count/4;
-                if(count<0)return v.getDistance(dst);
-                return (count/4)+v.getDistance(dst);
-               // return v.getDistance(dst);
+                heuristic.LRTAStarmatrix[v.x][v.y]= count / 4;
+                if(count<0)return  zarib*v.getDistance(dst);
+                return zarib2*(count/4)+ zarib*v.getDistance(dst);
+                //return v.getDistance(dst);
             }
 
             @Override
@@ -89,6 +93,7 @@ public class SearchAlgorithms
         PriorityQueue<Vector2D> LRTAStarQ=new PriorityQueue<>(LRTAStarComp);
         LRTAStarQ.add(src);
         while (!LRTAStarQ.isEmpty()){
+
             AStarNodes++;
             Vector2D current=LRTAStarQ.remove();
             if(current.equals(dst))break;
@@ -118,10 +123,19 @@ public class SearchAlgorithms
             else
                 count+= (0 - heuristic.LRTAStarINF);
         }
-        if(count<0)return  v.getDistance(dst);
-        return (count/4)+v.getDistance(dst);
+        if(count<0)return  zarib*v.getDistance(dst);
+        return zarib2*(count/4)+ zarib*v.getDistance(dst);
     }
 
+    private void printheuMat(Heuristics heuristics) {
+        int m[][]=heuristics.LRTAStarmatrix;
+        for (int i = 0; i < m.length; i++) {
+            for (int j = 0; j < m[0].length; j++) {
+                System.out.print(m[j][i]+" ");
+            }
+            System.out.println();
+        }
+    }
 
     public PathData BFS(Position source,int depthLimit)
     {

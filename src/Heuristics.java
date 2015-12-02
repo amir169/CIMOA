@@ -20,6 +20,8 @@ public class Heuristics
 
     //must call in constructor
     void initialLRTAStarMatrx(){
+      //  printuMat();
+        System.out.println();
         for (int i = 0; i < worldMatrix.length; i++) {
             for (int j = 0; j < worldMatrix[0].length; j++) {
                 if(worldMatrix[i][j]!=0)
@@ -27,6 +29,15 @@ public class Heuristics
                 else
                     LRTAStarmatrix[i][j]= 0-LRTAStarINF;
             }
+        }
+    }
+    private void printuMat() {
+        int m[][]=worldMatrix;
+        for (int i = 0; i < m.length; i++) {
+            for (int j = 0; j < m[0].length; j++) {
+                System.out.print(m[j][i]+" ");
+            }
+            System.out.println();
         }
     }
 }

@@ -21,8 +21,9 @@ public class MyAI implements PlayerAI
 
     public void doTurn(WorldModel wm)
     {
-        SearchAlgorithms searchAlgorithms=new SearchAlgorithms(wm.cloneTerrain());
-        heuristics=new Heuristics(wm.cloneTerrain(),100);
+        SearchAlgorithms searchAlgorithms=new SearchAlgorithms(wm.cloneTerrain(),7,1);
+        heuristics=new Heuristics(wm.cloneTerrain(),50);
+        System.out.println();
 
         Unit c = wm.self.agents.get(0);
         Unit mc=(wm.self.agents.size()>1)?wm.self.agents.get(1) : null;
@@ -33,7 +34,7 @@ public class MyAI implements PlayerAI
                 System.out.println();
 //                path=searchAlgorithms.BFS(Position.getPos(mc.getPos()),100).toPath(new Position(9,9));
 //                System.err.println("BFSNODES: " + searchAlgorithms.bfsNodes);
-                path = searchAlgorithms.LRTAStar(heuristics, mc.getPos(), new Vector2D(9, 9)).toPath(new Position(9, 9));
+                path = searchAlgorithms.LRTAStar(heuristics, mc.getPos(), new Vector2D(7, 0)).toPath(new Position(7, 0));
                 System.err.println("ASTARNODES: " + searchAlgorithms.AStarNodes);
                 System.err.println("path: "+path);
                 printheuMat();
@@ -61,7 +62,7 @@ public class MyAI implements PlayerAI
         int m[][]=heuristics.LRTAStarmatrix;
         for (int i = 0; i < m.length; i++) {
             for (int j = 0; j < m[0].length; j++) {
-                System.out.print(m[i][j]+" ");
+                System.out.print(m[j][i]+" ");
             }
             System.out.println();
         }
