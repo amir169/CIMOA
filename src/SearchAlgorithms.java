@@ -31,6 +31,19 @@ public class SearchAlgorithms
         return true;
     }
 
+    private boolean passable(Vector2D v)
+    {
+        int x=v.x;
+        int y=v.y;
+        if(x < 0 || y < 0 || x >= worldMatrix.length || y >= worldMatrix[0].length)
+            return false;
+
+        if(worldMatrix[x][y] != 0)
+            return false;
+
+        return true;
+    }
+
     public PathData Dijkstra(int[][] matrix,Position pos)
     {
         //needs implementations
@@ -46,15 +59,18 @@ public class SearchAlgorithms
     public PathData LRTAStar(Heuristics heuristic,Vector2D src,Vector2D dst)
     {
         PathData pathData= new PathData(worldMatrix,Position.getPos(src));
-
         Comparator<Vector2D> LRTAStarComp=new Comparator<Vector2D>() {
 
             int h(Vector2D v){
                 int count=0;
                 for (int i = 0; i < 4; i++) {
-                    count+=heuristic.LRTAStarmatrix[v.x+xMoves[i] ][v.y+yMoves[i] ];
+                    if(passable(v.x+xMoves[i],v.y+yMoves[i]) )
+                        count+=heuristic.LRTAStarmatrix[v.x+xMoves[i] ][v.y+yMoves[i] ];
+                    else
+                        count+= (0 - heuristic.LRTAStarINF);
                 }
                 heuristic.LRTAStarmatrix[v.x][v.y]= count/4;
+                if(count<0)return v.getDistance(dst);
                 return (count/4)+v.getDistance(dst);
             }
 
@@ -62,11 +78,42 @@ public class SearchAlgorithms
             public int compare(Vector2D o1, Vector2D o2) {
                 int f1=h(o1)+pathData.distance[o1.x][o1.y];
                 int f2=h(o2)+pathData.distance[o2.x][o2.y];
-                return f2-f1;//must test;
+                return f1-f2;//must test;
             }
         };
         PriorityQueue<Vector2D> LRTAStarQ=new PriorityQueue<>(LRTAStarComp);
-        return null;
+        LRTAStarQ.add(src);
+        while (!LRTAStarQ.isEmpty()){
+            Vector2D current=LRTAStarQ.remove();
+            if(current.equals(dst))break;
+            for (int i = 0; i < 4; i++) {
+                Vector2D child=new Vector2D(current.x+xMoves[i],current.y+yMoves[i]);
+                if(passable(child)){
+                    int lastF=pathData.distance[child.x][child.y]+LRTAStarH(heuristic,child,dst);
+                    int currentF=pathData.distance[current.x][current.y]+1+LRTAStarH(heuristic,child,dst);
+                    if(currentF<lastF){
+                        pathData.distance[child.x][child.y]=pathData.distance[current.x][current.y]+1;
+                        pathData.parent[child.x][child.y]=directions[i];
+                        LRTAStarQ.add(child);
+                    }
+                }
+            }
+        }
+
+
+        return pathData;
+    }
+
+    private int LRTAStarH(Heuristics heuristic,Vector2D v,Vector2D dst) {
+        int count=0;
+        for (int i = 0; i < 4; i++) {
+            if(passable(v.x+xMoves[i],v.y+yMoves[i]) )
+                count+=heuristic.LRTAStarmatrix[v.x+xMoves[i] ][v.y+yMoves[i] ];
+            else
+                count+= (0 - heuristic.LRTAStarINF);
+        }
+        if(count<0)return  v.getDistance(dst);
+        return (count/4)+v.getDistance(dst);
     }
 
 
