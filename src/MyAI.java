@@ -17,27 +17,35 @@ public class MyAI implements PlayerAI
     Heuristics heuristics;//=new Heuristics(wm.cloneTerrain(),100);
     String path = "";
     boolean first = true;
+    int turnNumber = 0;
     @Override
 
     public void doTurn(WorldModel wm)
     {
         SearchAlgorithms searchAlgorithms=new SearchAlgorithms(wm.cloneTerrain(),7,1);
-        heuristics=new Heuristics(wm.cloneTerrain(),50);
-        System.out.println();
 
+        System.out.println();
+        turnNumber++;
+        if(first)
+        {
+            heuristics=new Heuristics(wm.cloneTerrain(),50);
+            first = false;
+        }
         Unit c = wm.self.agents.get(0);
         Unit mc=(wm.self.agents.size()>1)?wm.self.agents.get(1) : null;
 
         if(mc!= null) {
-            if(path=="") {
-                printheuMat();
-                System.out.println();
+            if(path.equals("")) {
+       //         printheuMat();
+       //         System.out.println();
 //                path=searchAlgorithms.BFS(Position.getPos(mc.getPos()),100).toPath(new Position(4,9));
 //                System.err.println("BFSNODES: " + searchAlgorithms.bfsNodes);
-                path = searchAlgorithms.LRTAStar(heuristics, mc.getPos(), new Vector2D(4, 9)).toPath(new Position(4, 9));
-                System.err.println("ASTARNODES: " + searchAlgorithms.AStarNodes);
-                System.err.println("path: "+path);
-                printheuMat();
+//                path = searchAlgorithms.LRTAStar(heuristics, mc.getPos(), new Vector2D(4, 9),100).toPath(new Position(4, 9));
+//                System.err.println("ASTARNODES: " + searchAlgorithms.AStarNodes);
+                  path = searchAlgorithms.hillClimbing(heuristics,Position.getPos(mc.getPos()),turnNumber);
+//                  printhillMat();
+        //        System.err.println("path: "+path);
+        //        printheuMat();
             }
         }
         if(!path.equals("")){
@@ -63,6 +71,15 @@ public class MyAI implements PlayerAI
         for (int i = 0; i < m.length; i++) {
             for (int j = 0; j < m[0].length; j++) {
                 System.out.print(m[j][i]+" ");
+            }
+            System.out.println();
+        }
+    }
+    private void printhillMat()
+    {
+        for (int i = 0; i < heuristics.darknessMatrix.length; i++) {
+            for (int j = 0; j < heuristics.darknessMatrix[0].length; j++) {
+                System.out.print(heuristics.lastSeenMatrix[j][i]+" ");
             }
             System.out.println();
         }

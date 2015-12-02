@@ -162,7 +162,7 @@ public class SearchAlgorithms
 
                 if (passable(x, y))
                 {
-                    if(pathData.distance[x][y] == 1000)
+                    if(pathData.distance[x][y] == Integer.MAX_VALUE)
                     {
                         bfsQ.add(new Position(x, y));
                         pathData.distance[x][y] = pathData.distance[current.x][current.y] + 1;
@@ -185,6 +185,34 @@ public class SearchAlgorithms
     {
         //needs implementations
         return null;
-     }
+    }
 
+    public String hillClimbing(Heuristics heuristic,Position source,int turnNumner)
+    {
+        double resultValue = Double.MAX_VALUE;
+        String resultMove = "";
+        double badness = 0.0;
+
+        int x,y;
+        for(int i=0;i<xMoves.length;i++)
+        {
+            x = source.x + xMoves[i];
+            y = source.y + yMoves[i];
+            if (passable(x, y))
+            {
+                if (heuristic.darknessMatrix[x][y] + 5*(1.0/heuristic.lastSeenMatrix[x][y]) < resultValue)
+                {
+                    resultValue = heuristic.darknessMatrix[x][y] + 5*(1.0/heuristic.lastSeenMatrix[x][y]);
+                    resultMove = directions[i];
+                }
+            }
+            else
+                badness += 0.25;            //impassable cells are bad!
+        }
+
+        heuristic.darknessMatrix[source.x][source.y] = resultValue + 1 + badness;
+        heuristic.lastSeenMatrix[source.x][source.y] = turnNumner;
+
+        return resultMove;
+    }
 }
