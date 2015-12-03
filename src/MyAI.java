@@ -23,6 +23,7 @@ public class MyAI implements PlayerAI
     int LRAStarINF=50;
 
     int[][] goldMatrix;
+    int[][] unitMatrix;
 
 
     @Override
@@ -41,12 +42,12 @@ public class MyAI implements PlayerAI
             heuristics=new Heuristics(wm.cloneTerrain(),LRAStarINF);
             first = false;
         }
-        Unit myCastle = wm.self.agents.get(0);
+        ChristopherCastle myCastle = new ChristopherCastle(wm.self.agents.get(0),wm,unitMatrix,goldMatrix,searchAlgorithms,heuristics,turnNumber);
 
 
         if(turnNumber%2==0){
 
-            myCastle.make(Direction.E,UnitType.WORKER);
+            myCastle.unit.make(Direction.E,UnitType.WORKER);
         }
 
 
