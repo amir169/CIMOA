@@ -16,19 +16,26 @@ import java.util.Random;
 public class MyAI implements PlayerAI
 {
     Heuristics heuristics;//=new Heuristics(wm.cloneTerrain(),100);
-    String path = "";
     boolean first = true;
     int turnNumber = 0;
     int zaribGetDistanceLRTAstar=7;
     int zaribMatrixCellLRTAstar=1;
     int LRAStarINF=50;
+
     int[][] goldMatrix;
+
+
     @Override
 
     public void doTurn(WorldModel wm)
     {
+        // ********************** //
+        // we chan
+        wm.cloneTerrain()[wm.self.agents.get(0).getPos().x][wm.self.agents.get(0).getPos().y]=3;
+        wm.cloneTerrain()[wm.others.get(0).agents.get(0).getPos().x][wm.others.get(0).agents.get(0).getPos().y]=3;
         SearchAlgorithms searchAlgorithms=new SearchAlgorithms(wm.cloneTerrain(),zaribGetDistanceLRTAstar,zaribMatrixCellLRTAstar);//a
         turnNumber++;
+
         if(first){
             //peyda kardan path behine ta castle harif
             heuristics=new Heuristics(wm.cloneTerrain(),LRAStarINF);
@@ -36,7 +43,9 @@ public class MyAI implements PlayerAI
         }
         Unit myCastle = wm.self.agents.get(0);
 
+
         if(turnNumber%2==0){
+
             myCastle.make(Direction.E,UnitType.WORKER);
         }
 
