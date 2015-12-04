@@ -18,7 +18,7 @@ public class SearchAlgorithms
     int xMoves[] = {0,0,1,-1};
     int yMoves[] = {1,-1,0,0};
     String directions[] = {"S", "N", "E", "W"};
-    private Queue<Position> bfsQ = new LinkedList<Position>();
+
 
     public SearchAlgorithms(int[][] worldMatrix,int zarib,int zarib2) {
         this.worldMatrix = worldMatrix;
@@ -106,12 +106,14 @@ public class SearchAlgorithms
                minFV=current;
             }
 
-            if(current.equals(dst)){findDest=true; break;}
+            if(current.equals(dst)){
+                System.err.println("falgotrue karde");findDest=true; break;}
             for (int i = 0; i < 4; i++) {
                 Vector2D child=new Vector2D(current.x+xMoves[i],current.y+yMoves[i]);
                 if(passable(child)){
+                    System.err.println("childesh pasaabel");
                     int lastF=pathData.distance[child.x][child.y]+LRTAStarH(heuristic,child,dst);
-                    int currentF=pathData.distance[current.x][current.y]+1+LRTAStarH(heuristic,child,dst);
+                    int currentF=pathData.distance[current.x][current.y]+LRTAStarH(heuristic,child,dst) + 1;
                     if(currentF<lastF){
                         pathData.distance[child.x][child.y]=pathData.distance[current.x][current.y]+1;
                         pathData.parent[child.x][child.y]=directions[i];
@@ -154,7 +156,7 @@ public class SearchAlgorithms
 
     public PathData BFS(Position source,int nodesLimit)
     {
-
+        Queue<Position> bfsQ = new LinkedList<Position>();
         PathData pathData = new PathData(worldMatrix,source);
         bfsQ.add(source);
         Position current;
@@ -175,7 +177,7 @@ public class SearchAlgorithms
 
                 if (passable(x, y))
                 {
-                    if(pathData.distance[x][y] == Integer.MAX_VALUE)
+                    if(pathData.distance[x][y] == 10000)
                     {
                         bfsQ.add(new Position(x, y));
                         pathData.distance[x][y] = pathData.distance[current.x][current.y] + 1;
@@ -185,6 +187,57 @@ public class SearchAlgorithms
             }
         }
         return pathData;
+
+    }
+
+    public NeighboursData BFS(int[][] contentMatrix, Position source,int nodesLimit)
+    {
+        Queue<Position> bfsQ = new LinkedList<Position>();
+        NeighboursData neighboursData = new NeighboursData();
+        PathData pathData = new PathData(worldMatrix,source);
+        bfsQ.add(source);
+        Position current;
+        int x,y;
+
+        while(!bfsQ.isEmpty())
+        {
+            current = bfsQ.remove();
+            bfsNodes++;
+            if(bfsNodes > nodesLimit)
+                break;
+
+            for(int i=0;i<xMoves.length;i++)
+            {
+
+                x = current.x + xMoves[i];
+                y = current.y + yMoves[i];
+
+                if (passable(x, y))
+                {
+                    if(pathData.distance[x][y] == 10000)
+                    {
+                        if(contentMatrix[x][y]/10 == 1)
+                        {
+                            if (contentMatrix[x][y] % 10 == 1)
+                                neighboursData.myWarriors.add(current);
+                            if(contentMatrix[x][y] % 10 == 2)
+                                neighboursData.myWorkers.add(current);
+                        }
+                        if(contentMatrix[x][y] / 10 == 2)
+                        {
+                            if(contentMatrix[x][y] % 10 == 1)
+                                neighboursData.theirWarriors.add(current);
+                            if(contentMatrix[x][y] % 10 == 2)
+                                neighboursData.theirWorkers.add(current);
+                        }
+                        bfsQ.add(new Position(x, y));
+                        pathData.distance[x][y] = pathData.distance[current.x][current.y] + 1;
+                        pathData.parent[x][y] = directions[i];
+                    }
+                }
+            }
+        }
+        return neighboursData;
 
     }
 

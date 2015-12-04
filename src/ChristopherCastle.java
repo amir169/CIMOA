@@ -10,6 +10,7 @@ public class ChristopherCastle {
     String task;
     Vector2D target;
     WorldModel wm;
+    double dangerAmount;
     int[][] unitMatrix;
     int[][] goldMatrix;
     SearchAlgorithms searchAlgorithms;
@@ -25,7 +26,11 @@ public class ChristopherCastle {
         this.heuristics = heuristics;
         this.turnNumber = turnNumber;
     }
-    public void setTask() {
+    public void setTask(int castleBFSLimit){
+        NeighboursData neighboursData = searchAlgorithms.BFS(unitMatrix, Position.getPos(unit.getPos()), castleBFSLimit);
+        //worker
+        //warrior
+        //gold
 
     }
 

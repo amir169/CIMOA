@@ -15,6 +15,17 @@ public class PathData
     int yMoves[] = {1,-1,0,0};
     String directions[] = {"S", "N", "E", "W"};
 
+    private boolean passable(int x,int y)
+    {
+        if(x < 0 || y < 0 || x >= parent.length || y >= parent[0].length)
+            return false;
+
+        if(distance[x][y] != Integer.MAX_VALUE)
+            return false;
+
+        return true;
+    }
+
     public PathData(int[][] matrix,Position source)
     {
         this.source = source;
@@ -26,7 +37,7 @@ public class PathData
         for(int i=0;i<width;i++)
             for(int j=0;j<height;j++)
             {
-                distance[i][j] = 1000;
+                distance[i][j] = 10000; //inf
                 parent[i][j] = "";
             }
 
@@ -54,7 +65,7 @@ public class PathData
         if(path.equals(""))
         {
             for(int i=0;i<xMoves.length;i++)
-                if(!parent[source.x + xMoves[i]][source.y + yMoves[i]].equals(""))
+                if(passable(source.x,source.y) && parent[source.x + xMoves[i]][source.y + yMoves[i]].equals(""))
                     return parent[source.x + xMoves[i]][source.y + yMoves[i]];
         }
         return new StringBuilder(path).reverse().toString();
