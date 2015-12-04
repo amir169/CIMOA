@@ -29,6 +29,13 @@ public class MyAI implements PlayerAI
     int LRAStarINF=50;
     int castleBfsLimit=7;
 
+    PathData bestPasthN;
+    PathData bestPasthS;
+    PathData bestPasthE;
+    PathData bestPasthW;
+
+    String turnDecision;
+
 
     Map<Integer,Unit> unitIDMap;
 
@@ -39,6 +46,7 @@ public class MyAI implements PlayerAI
 
     int[][] goldMatrix;
     int[][] unitMatrix;
+
 
 
     @Override
@@ -53,8 +61,13 @@ public class MyAI implements PlayerAI
         turnNumber++;
 
         if(first){
-            //peyda kardan path behine ta castle harif
             heuristics=new Heuristics(wm.cloneTerrain(),LRAStarINF);
+
+            bestPasthE=searchAlgorithms.LRTAStar(heuristics,new Vector2D(myCastlePos.x+1,myCastlePos.y),theirCastlePos,wm.getHeight()*wm.getWidth());
+            bestPasthW=searchAlgorithms.LRTAStar(heuristics,new Vector2D(myCastlePos.x-11,myCastlePos.y),theirCastlePos,wm.getHeight()*wm.getWidth());
+            bestPasthN=searchAlgorithms.LRTAStar(heuristics,new Vector2D(myCastlePos.x,myCastlePos.y+1),theirCastlePos,wm.getHeight()*wm.getWidth());
+            bestPasthS=searchAlgorithms.LRTAStar(heuristics,new Vector2D(myCastlePos.x,myCastlePos.y-1),theirCastlePos,wm.getHeight()*wm.getWidth());
+
             first = false;
         }
         ArrayList<ChristopherWorker> myWorkers=new ArrayList<>();
@@ -71,16 +84,12 @@ public class MyAI implements PlayerAI
         initilaUnitMatrixAndData(wm);
         initialGoldMatrix(wm);
 //        determineLimits();
-//        turnDecide();
+        turnDecide(wm);
 
         ChristopherCastle myCastle = new ChristopherCastle(wm.self.agents.get(0),wm,unitMatrix,goldMatrix,searchAlgorithms,heuristics,turnNumber,ourWorker,wm.goldMines.size());
+        turnDecision = myCastle.setTask(turnDecision,castleBfsLimit);
+        myCastle.doItsJob();
 
-        if(turnNumber%2==0){
-
-            myCastle.unit.make(Direction.E, UnitType.WORKER);
-        }
-        //myCastle.setTask(castleBfsLimit);
-        //myCastle.doItsJob();
 
         for (int i = 1; i < wm.self.agents.size(); i++) {
             if(wm.self.agents.get(i).getType()==UnitType.WORKER)
@@ -101,6 +110,57 @@ public class MyAI implements PlayerAI
             myWorkers.get(i).doItsJob();
         }
     }
+
+    private void turnDecide(WorldModel wm) {
+
+        double total = maxTurn
+                ,goldCompare;
+
+        double warriorCompare =(theirWarrior==0)? 100.0 : (double)ourWarrior/(double)theirWarrior;
+        double workerCompare =(theirWorker==0)? 100.0 : (double)ourWorker/(double)theirWorker;
+
+
+        goldCompare = (double)wm.self.gold / (double)wm.others.get(0).gold;
+
+        if((double)turnNumber / total < 1.0/3.0)
+        {
+                if(goldCompare < 2.0/3.0)
+                {
+                    if(workerCompare < 0.9)
+                        turnDecision = "gaingold";
+                    else
+                        turnDecision = "savegold";
+                }
+                else
+                        turnDecision = "none";
+        }
+        else if((double)turnNumber / total < 2.0/3.0)
+        {
+            if(goldCompare < 2.0/3.0)
+            {
+                if(workerCompare < 0.9)
+                    turnDecision = "gaingold";
+                else
+                    turnDecision = "savegold";
+            }
+            else
+                turnDecision = "none";
+        }
+        else
+        {
+            if(goldCompare < 2.0/3.0)
+            {
+                if(workerCompare < 0.9)
+                    turnDecision = "gaingold";
+                else
+                    turnDecision = "savegold";
+            }
+            else
+                turnDecision = "none";
+        }
+    }
+
+
     int[][] IDMatrix;
     private void initialIDMatrixAndIDMap(WorldModel wm) {
         unitIDMap=new HashMap<>();
