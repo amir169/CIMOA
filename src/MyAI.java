@@ -29,6 +29,8 @@ public class MyAI implements PlayerAI
     int LRAStarINF=50;
     int castleBfsLimit=7;
 
+    String turnDecision;
+
 
     Map<Integer,Unit> unitIDMap;
 
@@ -64,7 +66,7 @@ public class MyAI implements PlayerAI
         initilaUnitMatrixAndData(wm);
         initialGoldMatrix(wm);
 //        determineLimits();
-//        turnDecide();
+        turnDecide(wm);
 
         ChristopherCastle myCastle = new ChristopherCastle(wm.self.agents.get(0),wm,unitMatrix,goldMatrix,searchAlgorithms,heuristics,turnNumber,ourWorker,wm.goldMines.size());
 
@@ -105,6 +107,92 @@ public class MyAI implements PlayerAI
             myWorkers.get(i).doItsJob();
         }
     }
+
+    private void turnDecide(WorldModel wm) {
+
+        double total = 1
+                ,maxHPOfCastle = 100.0
+                ,dangerLimit1 = 0
+                ,dangerLimit2 = 0
+                ,dangerLimit3 = 0
+                ,goldCompare = 0
+                ,warriorCompare = 0
+                ,workerCompare = 0;
+
+
+        goldCompare = (double)wm.self.gold / (double)wm.others.get(0).gold;
+
+        if((double)turnNumber / total < 1.0/3.0)
+        {
+            if(dangerAmount > dangerLimit1)
+                turnDecision = "Warrior";
+            else
+            {
+                if(goldCompare < 2.0/3.0)
+                {
+                    if(workerCompare < 0.9)
+                        turnDecision = "Worker";
+                    else
+                        turnDecision = "Gold";
+                }
+                else
+                {
+                    if(warriorCompare < 0.9)
+                        turnDecision = "Warrior";
+                    else
+                        turnDecision = "Gold";
+                }
+            }
+        }
+        else if((double)turnNumber / total < 2.0/3.0)
+        {
+            if(dangerAmount > dangerLimit2)
+                turnDecision = "Warrior";
+            else
+            {
+                if(goldCompare < 3.0/4.0)
+                {
+                    if(workerCompare < 0.9)
+                        turnDecision = "Worker";
+                    else
+                        turnDecision = "Gold";
+                }
+                else
+                {
+                    if(warriorCompare < 0.75)
+                        turnDecision = "Warrior";
+                    else
+                        turnDecision = "Gold";
+                }
+            }
+        }
+        else
+        {
+            if(dangerAmount > dangerLimit3)
+            {
+                turnDecision = "Warrior";
+            }
+            else
+            {
+                if(goldCompare < 1.0)
+                {
+                    if(workerCompare < 0.9)
+                        turnDecision = "Worker";
+                    else
+                        turnDecision = "Gold";
+                }
+                else
+                {
+                    if(warriorCompare < 0.5)
+                        turnDecision = "Warrior";
+                    else
+                        turnDecision = "Gold";
+                }
+            }
+        }
+
+    }
+
     int[][] IDMatrix;
     private void initialIDMatrixAndIDMap(WorldModel wm) {
         unitIDMap=new HashMap<>();
