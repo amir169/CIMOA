@@ -29,6 +29,11 @@ public class MyAI implements PlayerAI
     int LRAStarINF=50;
     int castleBfsLimit=7;
 
+    PathData bestPasthN;
+    PathData bestPasthS;
+    PathData bestPasthE;
+    PathData bestPasthW;
+
     String turnDecision;
 
 
@@ -43,6 +48,7 @@ public class MyAI implements PlayerAI
     int[][] unitMatrix;
 
 
+
     @Override
 
     public void doTurn(WorldModel wm)
@@ -55,8 +61,13 @@ public class MyAI implements PlayerAI
         turnNumber++;
 
         if(first){
-            //peyda kardan path behine ta castle harif
             heuristics=new Heuristics(wm.cloneTerrain(),LRAStarINF);
+
+            bestPasthE=searchAlgorithms.LRTAStar(heuristics,new Vector2D(myCastlePos.x+1,myCastlePos.y),theirCastlePos,wm.getHeight()*wm.getWidth());
+            bestPasthW=searchAlgorithms.LRTAStar(heuristics,new Vector2D(myCastlePos.x-11,myCastlePos.y),theirCastlePos,wm.getHeight()*wm.getWidth());
+            bestPasthN=searchAlgorithms.LRTAStar(heuristics,new Vector2D(myCastlePos.x,myCastlePos.y+1),theirCastlePos,wm.getHeight()*wm.getWidth());
+            bestPasthS=searchAlgorithms.LRTAStar(heuristics,new Vector2D(myCastlePos.x,myCastlePos.y-1),theirCastlePos,wm.getHeight()*wm.getWidth());
+
             first = false;
         }
         ArrayList<ChristopherWorker> myWorkers=new ArrayList<>();
