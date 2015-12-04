@@ -60,6 +60,13 @@ public class MyAI implements PlayerAI
         ArrayList<ChristopherWorker> myWorkers=new ArrayList<>();
         ArrayList<ChristopherWarrior> myWarrior=new ArrayList<>();
 
+
+        if(turnNumber%2==0){
+
+            myCastle.unit.make(Direction.E, UnitType.WORKER);
+        }
+
+
         initialIDMatrixAndIDMap(wm);
         initilaUnitMatrixAndData(wm);
         initialGoldMatrix(wm);
