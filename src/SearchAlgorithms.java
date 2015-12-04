@@ -100,8 +100,8 @@ public class SearchAlgorithms
             Vector2D current=LRTAStarQ.remove();
 
             if(LRTAStarH(heuristic,current,dst)+pathData.distance[current.x][current.y]<=minF){
-               minF=LRTAStarH(heuristic,src,dst)+pathData.distance[current.x][current.y];
-               minFV=current;
+                minF=LRTAStarH(heuristic,src,dst)+pathData.distance[current.x][current.y];
+                minFV=current;
             }
 
             if(current.equals(dst)){
@@ -263,9 +263,9 @@ public class SearchAlgorithms
             y = source.y + yMoves[i];
             if (passable(x, y))
             {
-                if (heuristic.darknessMatrix[x][y] + 5*(1.0/heuristic.lastSeenMatrix[x][y]) < resultValue)
+                if (heuristic.darknessMatrix[x][y] + 4.0/(double)(new Vector2D(x,y).getDistance(theirCastlePOs)) < resultValue)
                 {
-                    resultValue = heuristic.darknessMatrix[x][y] + 5*(1.0/heuristic.lastSeenMatrix[x][y]);
+                    resultValue = heuristic.darknessMatrix[x][y] + 4.0/(source.getDistance(Position.getPos(theirCastlePOs)));
                     resultMove = directions[i];
                 }
             }
