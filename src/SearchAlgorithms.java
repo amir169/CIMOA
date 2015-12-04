@@ -19,10 +19,12 @@ public class SearchAlgorithms
     int yMoves[] = {1,-1,0,0};
     String directions[] = {"S", "N", "E", "W"};
 
+    Vector2D myCastelpos,theirCastlePOs;
 
-    public SearchAlgorithms(int[][] worldMatrix,int zarib,int zarib2) {
+    public SearchAlgorithms(int[][] worldMatrix,int zarib,int zarib2,Vector2D myCastelpos,Vector2D theirCastlePOs) {
         this.worldMatrix = worldMatrix;
-
+        this.myCastelpos=myCastelpos;
+        this.theirCastlePOs=theirCastlePOs;
         bfsNodes = 0;
         this.zarib=zarib;
         this.zarib2=zarib2;
@@ -30,26 +32,22 @@ public class SearchAlgorithms
 
     private boolean passable(int x,int y)
     {
-        if(x < 0 || y < 0 || x >= worldMatrix.length || y >= worldMatrix[0].length  || (x==0 && y==0))
+        if(x < 0 || y < 0 || x >= worldMatrix.length || y >= worldMatrix[0].length)
             return false;
 
-        if(worldMatrix[x][y] != 0)
+        if(worldMatrix[x][y] != 0 || (x==myCastelpos.x && y==myCastelpos.y))
             return false;
+
+        if(theirCastlePOs!=null)
+            if((x==theirCastlePOs.x && y==theirCastlePOs.y))
+                return false;
 
         return true;
     }
 
     private boolean passable(Vector2D v)
     {
-        int x=v.x;
-        int y=v.y;
-        if(x < 0 || y < 0 || x >= worldMatrix.length || y >= worldMatrix[0].length || (x==0 && y==0))
-            return false;
-
-        if(worldMatrix[x][y] != 0)
-            return false;
-
-        return true;
+        return passable(v.x,v.y);
     }
 
     public PathData Dijkstra(int[][] matrix,Position pos)

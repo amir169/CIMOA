@@ -10,6 +10,7 @@ public class PathData
     int width,height;
     Position source;
     Position dest;
+    int maxINF=10000;
 
     int xMoves[] = {0,0,1,-1};
     int yMoves[] = {1,-1,0,0};
@@ -20,7 +21,7 @@ public class PathData
         if(x < 0 || y < 0 || x >= parent.length || y >= parent[0].length)
             return false;
 
-        if(distance[x][y] != Integer.MAX_VALUE)
+        if(distance[x][y] != maxINF)
             return false;
 
         return true;
@@ -37,7 +38,7 @@ public class PathData
         for(int i=0;i<width;i++)
             for(int j=0;j<height;j++)
             {
-                distance[i][j] = 10000; //inf
+                distance[i][j] = maxINF; //inf
                 parent[i][j] = "";
             }
 

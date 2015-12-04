@@ -20,9 +20,14 @@ public class MyAI implements PlayerAI
     Heuristics heuristics;//=new Heuristics(wm.cloneTerrain(),100);
     boolean first = true;
     int turnNumber = 0;
+    Vector2D myCastlePos;
+    Vector2D theirCastlePos;
+
     int zaribGetDistanceLRTAstar=7;
     int zaribMatrixCellLRTAstar=1;
     int LRAStarINF=50;
+    int castleBfsLimit=7;
+
     Map<Integer,Unit> unitIDMap;
 
     int ourWorker;
@@ -40,9 +45,10 @@ public class MyAI implements PlayerAI
     {
         // ********************** //
         // we chan
-        wm.cloneTerrain()[wm.self.agents.get(0).getPos().x][wm.self.agents.get(0).getPos().y]=3;
-        wm.cloneTerrain()[wm.others.get(0).agents.get(0).getPos().x][wm.others.get(0).agents.get(0).getPos().y]=3;
-        SearchAlgorithms searchAlgorithms=new SearchAlgorithms(wm.cloneTerrain(),zaribGetDistanceLRTAstar,zaribMatrixCellLRTAstar);//a
+        myCastlePos=new Vector2D(wm.self.agents.get(0).getPos().x,wm.self.agents.get(0).getPos().y);
+        if(wm.others.size()>0)
+            theirCastlePos =new Vector2D(wm.others.get(0).agents.get(0).getPos().x,wm.others.get(0).agents.get(0).getPos().y);
+        SearchAlgorithms searchAlgorithms=new SearchAlgorithms(wm.cloneTerrain(),zaribGetDistanceLRTAstar,zaribMatrixCellLRTAstar,myCastlePos,theirCastlePos);//a
         turnNumber++;
 
         if(first){
@@ -51,13 +57,8 @@ public class MyAI implements PlayerAI
             first = false;
         }
         ChristopherCastle myCastle = new ChristopherCastle(wm.self.agents.get(0),wm,unitMatrix,goldMatrix,searchAlgorithms,heuristics,turnNumber);
-
-
-        if(turnNumber%2==0){
-
-            myCastle.unit.make(Direction.E, UnitType.WORKER);
-        }
-
+        ArrayList<ChristopherWorker> myWorkers=new ArrayList<>();
+        ArrayList<ChristopherWarrior> myWarrior=new ArrayList<>();
 
         initialIDMatrixAndIDMap(wm);
         initilaUnitMatrixAndData(wm);
@@ -66,54 +67,71 @@ public class MyAI implements PlayerAI
 //        turnDecide();
 
 
-        ArrayList<ChristopherWorker> workers=new ArrayList<>();
+        if(turnNumber%2==0){
+
+            myCastle.unit.make(Direction.E, UnitType.WORKER);
+        }
+        //myCastle.setTask(castleBfsLimit);
+        //myCastle.doItsJob();
+
         for (int i = 1; i < wm.self.agents.size(); i++) {
             if(wm.self.agents.get(i).getType()==UnitType.WORKER)
-                workers.add(new ChristopherWorker(wm.self.agents.get(i),wm,null,goldMatrix,searchAlgorithms,heuristics,turnNumber));
+                myWorkers.add(new ChristopherWorker(wm.self.agents.get(i),wm,unitMatrix,goldMatrix,searchAlgorithms,heuristics,turnNumber));
+            if(wm.self.agents.get(i).getType() == UnitType.WARRIOR){
+                myWarrior.add(new ChristopherWarrior(wm.self.agents.get(i),wm,unitMatrix,goldMatrix,searchAlgorithms,heuristics,turnNumber));
+            }
+        }
+
+        for (int i = 0; i < myWarrior.size(); i++) {
+            myWarrior.get(i).setTask();
+            myWarrior.get(i).doItsJob();
         }
 
 
-        for (int i = 0; i < workers.size(); i++) {
-            workers.get(i).setTask();
-            workers.get(i).doItsJob();
+        for (int i = 0; i < myWorkers.size(); i++) {
+            myWorkers.get(i).setTask();
+            myWorkers.get(i).doItsJob();
         }
-
-
     }
     int[][] IDMatrix;
     private void initialIDMatrixAndIDMap(WorldModel wm) {
         unitIDMap=new HashMap<>();
         IDMatrix=new int[wm.cloneTerrain().length][wm.cloneTerrain()[0].length];
-        ArrayList<Unit> ag=wm.others.get(0).agents;
-        for (int i = 0; i < ag.size() ;i++) {
-            IDMatrix[ag.get(i).getPos().x][ag.get(i).getPos().y]=ag.get(i).getId();
-            unitIDMap.put(ag.get(i).getId(),ag.get(i));
+        if(wm.others.size()>0){
+            ArrayList<Unit> ag=wm.others.get(0).agents;
+            for (int i = 0; i < ag.size() ;i++) {
+                IDMatrix[ag.get(i).getPos().x][ag.get(i).getPos().y]=ag.get(i).getId();
+                unitIDMap.put(ag.get(i).getId(),ag.get(i));
+            }
         }
         ArrayList<Unit> mine= wm.self.agents;
         for (int i = 0; i < mine.size(); i++) {
             IDMatrix[mine.get(i).getPos().x][mine.get(i).getPos().y]=mine.get(i).getId();
-            unitIDMap.put(ag.get(i).getId(),ag.get(i));
+            unitIDMap.put(mine.get(i).getId(), mine.get(i));
         }
 
     }
 
     private void initilaUnitMatrixAndData(WorldModel wm) {
         unitMatrix=new int[wm.cloneTerrain().length][wm.cloneTerrain()[0].length];
-        ArrayList<Unit> ag=wm.others.get(0).agents;
         ourWorker=0;
         ourWarrior=0;
         theirWorker=0;
         theirWarrior=0;
+
+        if(wm.others.size()>0){
+        ArrayList<Unit> ag=wm.others.get(0).agents;
         for (int i = 0; i < ag.size() ;i++) {
-            if(ag.get(i).getType().equals(UnitType.WARRIOR)){
-                unitMatrix[ag.get(i).getPos().x][ag.get(i).getPos().y]=21;
-                theirWarrior++;
+                if(ag.get(i).getType().equals(UnitType.WARRIOR)){
+                    unitMatrix[ag.get(i).getPos().x][ag.get(i).getPos().y]=21;
+                    theirWarrior++;
+                }
+                else if(ag.get(i).getType().equals(UnitType.WORKER)){
+                    unitMatrix[ag.get(i).getPos().x][ag.get(i).getPos().y]=22;
+                    theirWorker++;
+                }
             }
-            else if(ag.get(i).getType().equals(UnitType.WORKER)){
-                unitMatrix[ag.get(i).getPos().x][ag.get(i).getPos().y]=22;
-                theirWorker++;
-            }
-        }
+           }
         ArrayList<Unit> mine= wm.self.agents;
         for (int i = 0; i < mine.size(); i++) {
             if(mine.get(i).getType().equals(UnitType.WARRIOR)){

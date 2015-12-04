@@ -41,19 +41,10 @@ public class ChristopherWorker {
         }
         else {
             String path=searchAlgorithms.hillClimbing(heuristics, Position.getPos(unit.getPos()), turnNumber);
-        if(!path.equals("")){
-            if(path.charAt(0) == 'S' && unit != null)
-                unit.move(Direction.N);
-            else if(path.charAt(0) == 'N' && unit != null)
-                unit.move(Direction.S);
-            else if(path.charAt(0) == 'W' && unit != null)
-                unit.move(Direction.W);
-            else if(path.charAt(0) == 'E' && unit != null)
-                unit.move(Direction.E);
-        }
-        if(!path.equals("")) {
-            path = path.substring(1);
-        }
+            if(!path.equals("")){
+                unit.move(Direction.valueOf(path.substring(0, 1)));
+                path = path.substring(1);
+            }
 
         }
     }
