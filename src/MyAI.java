@@ -8,6 +8,8 @@ import jdk.nashorn.internal.objects.NativeUint16Array;
 import server.Settings;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 /**
@@ -21,6 +23,12 @@ public class MyAI implements PlayerAI
     int zaribGetDistanceLRTAstar=7;
     int zaribMatrixCellLRTAstar=1;
     int LRAStarINF=50;
+    Map<Integer,Unit> unitIDMap;
+
+    int ourWorker;
+    int ourWarrior;
+    int theirWorker;
+    int theirWarrior;
 
     int[][] goldMatrix;
     int[][] unitMatrix;
@@ -47,43 +55,76 @@ public class MyAI implements PlayerAI
 
         if(turnNumber%2==0){
 
-            myCastle.unit.make(Direction.E,UnitType.WORKER);
+            myCastle.unit.make(Direction.E, UnitType.WORKER);
         }
 
 
-//        initilaUnitMatrixAndData(wm);
+        initialIDMatrixAndIDMap(wm);
+        initilaUnitMatrixAndData(wm);
         initialGoldMatrix(wm);
 //        determineLimits();
-//        turnDesicion();
+//        turnDecide();
 
 
         ArrayList<ChristopherWorker> workers=new ArrayList<>();
         for (int i = 1; i < wm.self.agents.size(); i++) {
             if(wm.self.agents.get(i).getType()==UnitType.WORKER)
                 workers.add(new ChristopherWorker(wm.self.agents.get(i),wm,null,goldMatrix,searchAlgorithms,heuristics,turnNumber));
-
         }
+
 
         for (int i = 0; i < workers.size(); i++) {
             workers.get(i).setTask();
             workers.get(i).doItsJob();
         }
-/*
-        if(!path.equals("")){
-            if(path.charAt(0) == 'S' && mc != null)
-                mc.move(Direction.N);
-            else if(path.charAt(0) == 'N' && mc != null)
-                mc.move(Direction.S);
-            else if(path.charAt(0) == 'W' && mc != null)
-                mc.move(Direction.W);
-            else if(path.charAt(0) == 'E' && mc != null)
-                mc.move(Direction.E);
-        }
-        if(!path.equals("")) {
-            path = path.substring(1);
-        }
-*/
 
+
+    }
+    int[][] IDMatrix;
+    private void initialIDMatrixAndIDMap(WorldModel wm) {
+        unitIDMap=new HashMap<>();
+        IDMatrix=new int[wm.cloneTerrain().length][wm.cloneTerrain()[0].length];
+        ArrayList<Unit> ag=wm.others.get(0).agents;
+        for (int i = 0; i < ag.size() ;i++) {
+            IDMatrix[ag.get(i).getPos().x][ag.get(i).getPos().y]=ag.get(i).getId();
+            unitIDMap.put(ag.get(i).getId(),ag.get(i));
+        }
+        ArrayList<Unit> mine= wm.self.agents;
+        for (int i = 0; i < mine.size(); i++) {
+            IDMatrix[mine.get(i).getPos().x][mine.get(i).getPos().y]=mine.get(i).getId();
+            unitIDMap.put(ag.get(i).getId(),ag.get(i));
+        }
+
+    }
+
+    private void initilaUnitMatrixAndData(WorldModel wm) {
+        unitMatrix=new int[wm.cloneTerrain().length][wm.cloneTerrain()[0].length];
+        ArrayList<Unit> ag=wm.others.get(0).agents;
+        ourWorker=0;
+        ourWarrior=0;
+        theirWorker=0;
+        theirWarrior=0;
+        for (int i = 0; i < ag.size() ;i++) {
+            if(ag.get(i).getType().equals(UnitType.WARRIOR)){
+                unitMatrix[ag.get(i).getPos().x][ag.get(i).getPos().y]=21;
+                theirWarrior++;
+            }
+            else if(ag.get(i).getType().equals(UnitType.WORKER)){
+                unitMatrix[ag.get(i).getPos().x][ag.get(i).getPos().y]=22;
+                theirWorker++;
+            }
+        }
+        ArrayList<Unit> mine= wm.self.agents;
+        for (int i = 0; i < mine.size(); i++) {
+            if(mine.get(i).getType().equals(UnitType.WARRIOR)){
+                unitMatrix[mine.get(i).getPos().x][mine.get(i).getPos().y]=11;
+                ourWarrior++;
+            }
+            else if(mine.get(i).getType().equals(UnitType.WORKER)){
+                unitMatrix[mine.get(i).getPos().x][mine.get(i).getPos().y]=12;
+                ourWorker++;
+            }
+        }
 
     }
 
@@ -99,7 +140,8 @@ public class MyAI implements PlayerAI
                 goldMatrix[wm.goldMines.get(i).pos.x][wm.goldMines.get(i).pos.y]=1;
         }
     }
-
+///////*******this for debug****///////////////
+    /*
     private void printheuMat() {
         int m[][]=heuristics.LRTAStarmatrix;
         for (int i = 0; i < m.length; i++) {
@@ -118,4 +160,5 @@ public class MyAI implements PlayerAI
             System.out.println();
         }
     }
+    */
 }
