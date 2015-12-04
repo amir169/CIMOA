@@ -69,11 +69,22 @@ public class MyAI implements PlayerAI
         ChristopherCastle myCastle = new ChristopherCastle(wm.self.agents.get(0),wm,unitMatrix,goldMatrix,searchAlgorithms,heuristics,turnNumber,ourWorker,wm.goldMines.size());
 
         if(turnNumber%2==0){
-
+            System.err.println("castle id:"+wm.self.id);
             myCastle.unit.make(Direction.E, UnitType.WORKER);
         }
         //myCastle.setTask(castleBfsLimit);
         //myCastle.doItsJob();
+
+        //just for test LAstar
+/*
+        PathData pTest;
+        pTest = searchAlgorithms.LRTAStar(heuristics, new Vector2D(3,1), new Vector2D(3,7), 100);
+        System.err.println("ASTARNODES : " + searchAlgorithms.AStarNodes + "pathLentgh: "+ pTest.distance[3][7]);
+        pTest = searchAlgorithms.LRTAStar(heuristics, new Vector2D(6,3), new Vector2D(1,4), 100);
+        System.err.println("ASTARNODES : " + searchAlgorithms.AStarNodes+ "pathLentgh: "+ pTest.distance[1][4]);
+        pTest = searchAlgorithms.LRTAStar(heuristics, new Vector2D(5,0), new Vector2D(0,5), 100);
+        System.err.println("ASTARNODES : " + searchAlgorithms.AStarNodes + "pathLentgh: "+ pTest.distance[0][5]);
+*/
 
         for (int i = 1; i < wm.self.agents.size(); i++) {
             if(wm.self.agents.get(i).getType()==UnitType.WORKER)

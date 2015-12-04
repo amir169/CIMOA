@@ -105,11 +105,10 @@ public class SearchAlgorithms
             }
 
             if(current.equals(dst)){
-                System.err.println("falgotrue karde");findDest=true; break;}
+                findDest=true; break;}
             for (int i = 0; i < 4; i++) {
                 Vector2D child=new Vector2D(current.x+xMoves[i],current.y+yMoves[i]);
                 if(passable(child)){
-                    System.err.println("childesh pasaabel");
                     int lastF=pathData.distance[child.x][child.y]+LRTAStarH(heuristic,child,dst);
                     int currentF=pathData.distance[current.x][current.y]+LRTAStarH(heuristic,child,dst) + 1;
                     if(currentF<lastF){
