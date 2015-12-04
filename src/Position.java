@@ -23,4 +23,8 @@ public class Position
         Position p=new Position(v.x,v.y);
         return p;
     }
+    public double getDistance(Position that)
+    {
+        return Math.sqrt((this.x - that.x)*(this.x - that.x) + (this.y - that.y)*(this.y - that.y));
+    }
 }

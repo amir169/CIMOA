@@ -50,7 +50,7 @@ public class ChristopherCastle {
     public String setTask(String status,int castleBFSLimit){
         double total = 1
                 ,maxHPOfCastle = 100.0
-                ,dangerLimit1 = 0
+                ,dangerLimit1 = 10
                 ,dangerLimit2 = 0
                 ,dangerLimit3 = 0
                 ,goldCompare = 0
@@ -63,12 +63,13 @@ public class ChristopherCastle {
 
         if(neighboursData.myWarriors.size() != 0)
             dangerAmount = (double)neighboursData.theirWarriors.size()/(double)neighboursData.myWarriors.size();
+        else if(neighboursData.theirWarriors.size()==0)
+            dangerAmount = 0;
         else
-            dangerAmount = 100;
+            dangerAmount=10;
 
         dangerAmount *= (maxHPOfCastle - wm.self.agents.get(0).getHP() + 1);
 
-        goldCompare = (double)wm.self.gold / (double)wm.others.get(0).gold;
 
         if(dangerAmount > dangerLimit1)
         {

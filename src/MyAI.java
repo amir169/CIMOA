@@ -55,7 +55,7 @@ public class MyAI implements PlayerAI
     {
 
         myCastlePos=new Vector2D(wm.self.agents.get(0).getPos().x,wm.self.agents.get(0).getPos().y);
-        if(wm.others.size()>0)
+//        if(wm.others.size()>0)
             theirCastlePos =new Vector2D(wm.others.get(0).agents.get(0).getPos().x,wm.others.get(0).agents.get(0).getPos().y);
         SearchAlgorithms searchAlgorithms=new SearchAlgorithms(wm.cloneTerrain(),zaribGetDistanceLRTAstar,zaribMatrixCellLRTAstar,myCastlePos,theirCastlePos);//a
         turnNumber++;
@@ -64,7 +64,7 @@ public class MyAI implements PlayerAI
             heuristics=new Heuristics(wm.cloneTerrain(),LRAStarINF);
 
             bestPasthE=searchAlgorithms.LRTAStar(heuristics,new Vector2D(myCastlePos.x+1,myCastlePos.y),theirCastlePos,wm.getHeight()*wm.getWidth());
-            bestPasthW=searchAlgorithms.LRTAStar(heuristics,new Vector2D(myCastlePos.x-11,myCastlePos.y),theirCastlePos,wm.getHeight()*wm.getWidth());
+            bestPasthW=searchAlgorithms.LRTAStar(heuristics,new Vector2D(myCastlePos.x-1,myCastlePos.y),theirCastlePos,wm.getHeight()*wm.getWidth());
             bestPasthN=searchAlgorithms.LRTAStar(heuristics,new Vector2D(myCastlePos.x,myCastlePos.y+1),theirCastlePos,wm.getHeight()*wm.getWidth());
             bestPasthS=searchAlgorithms.LRTAStar(heuristics,new Vector2D(myCastlePos.x,myCastlePos.y-1),theirCastlePos,wm.getHeight()*wm.getWidth());
 
