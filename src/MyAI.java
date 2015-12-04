@@ -69,24 +69,9 @@ public class MyAI implements PlayerAI
         turnDecide(wm);
 
         ChristopherCastle myCastle = new ChristopherCastle(wm.self.agents.get(0),wm,unitMatrix,goldMatrix,searchAlgorithms,heuristics,turnNumber,ourWorker,wm.goldMines.size());
+        turnDecision = myCastle.setTask(turnDecision,castleBfsLimit);
+        myCastle.doItsJob();
 
-        if(turnNumber%2==0){
-            System.err.println("castle id:"+wm.self.id);
-            myCastle.unit.make(Direction.E, UnitType.WORKER);
-        }
-        //myCastle.setTask(castleBfsLimit);
-        //myCastle.doItsJob();
-
-        //just for test LAstar
-/*
-        PathData pTest;
-        pTest = searchAlgorithms.LRTAStar(heuristics, new Vector2D(3,1), new Vector2D(3,7), 100);
-        System.err.println("ASTARNODES : " + searchAlgorithms.AStarNodes + "pathLentgh: "+ pTest.distance[3][7]);
-        pTest = searchAlgorithms.LRTAStar(heuristics, new Vector2D(6,3), new Vector2D(1,4), 100);
-        System.err.println("ASTARNODES : " + searchAlgorithms.AStarNodes+ "pathLentgh: "+ pTest.distance[1][4]);
-        pTest = searchAlgorithms.LRTAStar(heuristics, new Vector2D(5,0), new Vector2D(0,5), 100);
-        System.err.println("ASTARNODES : " + searchAlgorithms.AStarNodes + "pathLentgh: "+ pTest.distance[0][5]);
-*/
 
         for (int i = 1; i < wm.self.agents.size(); i++) {
             if(wm.self.agents.get(i).getType()==UnitType.WORKER)
@@ -110,88 +95,53 @@ public class MyAI implements PlayerAI
 
     private void turnDecide(WorldModel wm) {
 
-        double total = 1
-                ,maxHPOfCastle = 100.0
-                ,dangerLimit1 = 0
-                ,dangerLimit2 = 0
-                ,dangerLimit3 = 0
-                ,goldCompare = 0
-                ,warriorCompare = 0
-                ,workerCompare = 0;
+        double total = maxTurn
+                ,goldCompare;
+
+        double warriorCompare =(theirWarrior==0)? 100.0 : (double)ourWarrior/(double)theirWarrior;
+        double workerCompare =(theirWorker==0)? 100.0 : (double)ourWorker/(double)theirWorker;
 
 
         goldCompare = (double)wm.self.gold / (double)wm.others.get(0).gold;
 
         if((double)turnNumber / total < 1.0/3.0)
         {
-            if(dangerAmount > dangerLimit1)
-                turnDecision = "Warrior";
-            else
-            {
                 if(goldCompare < 2.0/3.0)
                 {
                     if(workerCompare < 0.9)
-                        turnDecision = "Worker";
+                        turnDecision = "gaingold";
                     else
-                        turnDecision = "Gold";
+                        turnDecision = "savegold";
                 }
                 else
-                {
-                    if(warriorCompare < 0.9)
-                        turnDecision = "Warrior";
-                    else
-                        turnDecision = "Gold";
-                }
-            }
+                        turnDecision = "none";
         }
         else if((double)turnNumber / total < 2.0/3.0)
         {
-            if(dangerAmount > dangerLimit2)
-                turnDecision = "Warrior";
-            else
+            if(goldCompare < 2.0/3.0)
             {
-                if(goldCompare < 3.0/4.0)
-                {
-                    if(workerCompare < 0.9)
-                        turnDecision = "Worker";
-                    else
-                        turnDecision = "Gold";
-                }
+                if(workerCompare < 0.9)
+                    turnDecision = "gaingold";
                 else
-                {
-                    if(warriorCompare < 0.75)
-                        turnDecision = "Warrior";
-                    else
-                        turnDecision = "Gold";
-                }
+                    turnDecision = "savegold";
             }
+            else
+                turnDecision = "none";
         }
         else
         {
-            if(dangerAmount > dangerLimit3)
+            if(goldCompare < 2.0/3.0)
             {
-                turnDecision = "Warrior";
+                if(workerCompare < 0.9)
+                    turnDecision = "gaingold";
+                else
+                    turnDecision = "savegold";
             }
             else
-            {
-                if(goldCompare < 1.0)
-                {
-                    if(workerCompare < 0.9)
-                        turnDecision = "Worker";
-                    else
-                        turnDecision = "Gold";
-                }
-                else
-                {
-                    if(warriorCompare < 0.5)
-                        turnDecision = "Warrior";
-                    else
-                        turnDecision = "Gold";
-                }
-            }
+                turnDecision = "none";
         }
-
     }
+
 
     int[][] IDMatrix;
     private void initialIDMatrixAndIDMap(WorldModel wm) {

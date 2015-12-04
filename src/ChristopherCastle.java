@@ -30,11 +30,13 @@ public class ChristopherCastle {
         this.heuristics = heuristics;
         this.turnNumber = turnNumber;
     }
-    public void setTask(int castleBFSLimit){
+    public String setTask(String s,int castleBFSLimit){
         NeighboursData neighboursData = searchAlgorithms.BFS(unitMatrix, Position.getPos(unit.getPos()), castleBFSLimit);
         //worker
         //warrior
         //gold
+
+        return null;
 
     }
 
