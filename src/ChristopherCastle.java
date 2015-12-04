@@ -16,8 +16,12 @@ public class ChristopherCastle {
     SearchAlgorithms searchAlgorithms;
     Heuristics heuristics;
     int turnNumber;
+    int myWorkerAmount;
+    int goldMineSize;
 
-    public ChristopherCastle(Unit unit, WorldModel wm, int[][] unitMatrix, int[][] goldMatrix, SearchAlgorithms searchAlgorithms, Heuristics heuristics, int turnNumber) {
+    public ChristopherCastle(Unit unit, WorldModel wm, int[][] unitMatrix, int[][] goldMatrix, SearchAlgorithms searchAlgorithms, Heuristics heuristics, int turnNumber,int myWorkerAmount,int goldMineSize) {
+        this.myWorkerAmount=myWorkerAmount;
+        this.goldMineSize=goldMineSize;
         this.unit = unit;
         this.wm = wm;
         this.unitMatrix = unitMatrix;

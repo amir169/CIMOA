@@ -23,10 +23,12 @@ public class MyAI implements PlayerAI
     Vector2D myCastlePos;
     Vector2D theirCastlePos;
 
+    int maxTurn=300;
     int zaribGetDistanceLRTAstar=7;
     int zaribMatrixCellLRTAstar=1;
     int LRAStarINF=50;
     int castleBfsLimit=7;
+
 
     Map<Integer,Unit> unitIDMap;
 
@@ -43,8 +45,7 @@ public class MyAI implements PlayerAI
 
     public void doTurn(WorldModel wm)
     {
-        // ********************** //
-        // we chan
+
         myCastlePos=new Vector2D(wm.self.agents.get(0).getPos().x,wm.self.agents.get(0).getPos().y);
         if(wm.others.size()>0)
             theirCastlePos =new Vector2D(wm.others.get(0).agents.get(0).getPos().x,wm.others.get(0).agents.get(0).getPos().y);
@@ -56,7 +57,6 @@ public class MyAI implements PlayerAI
             heuristics=new Heuristics(wm.cloneTerrain(),LRAStarINF);
             first = false;
         }
-        ChristopherCastle myCastle = new ChristopherCastle(wm.self.agents.get(0),wm,unitMatrix,goldMatrix,searchAlgorithms,heuristics,turnNumber);
         ArrayList<ChristopherWorker> myWorkers=new ArrayList<>();
         ArrayList<ChristopherWarrior> myWarrior=new ArrayList<>();
 
@@ -66,6 +66,7 @@ public class MyAI implements PlayerAI
 //        determineLimits();
 //        turnDecide();
 
+        ChristopherCastle myCastle = new ChristopherCastle(wm.self.agents.get(0),wm,unitMatrix,goldMatrix,searchAlgorithms,heuristics,turnNumber,ourWorker,wm.goldMines.size());
 
         if(turnNumber%2==0){
 
