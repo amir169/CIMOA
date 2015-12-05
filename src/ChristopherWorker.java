@@ -71,7 +71,6 @@ public class ChristopherWorker {
             String path=searchAlgorithms.hillClimbing(heuristics, Position.getPos(unit.getPos()), turnNumber);
             if(!path.equals("")){
                 unit.move(Direction.valueOf(path.substring(0, 1)));
-                path = path.substring(1);
             }
 
         }

@@ -7,7 +7,7 @@ public class Main
 {
     public static void main(String[] args)
     {
-        ClientMain.main(args,new MyAI(),"Pouya");
+        ClientMain.main(args,new MyAI(),"Christopher");
     }
 
 }

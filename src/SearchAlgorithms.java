@@ -104,13 +104,12 @@ public class SearchAlgorithms
                 minFV=current;
             }
 
-            if(current.equals(dst)){
-                findDest=true; break;}
+            if(current.equals(dst)){findDest=true; break;}
             for (int i = 0; i < 4; i++) {
                 Vector2D child=new Vector2D(current.x+xMoves[i],current.y+yMoves[i]);
                 if(passable(child)){
                     int lastF=pathData.distance[child.x][child.y]+LRTAStarH(heuristic,child,dst);
-                    int currentF=pathData.distance[current.x][current.y]+LRTAStarH(heuristic,child,dst) + 1;
+                    int currentF=pathData.distance[current.x][current.y]+1+LRTAStarH(heuristic,child,dst);
                     if(currentF<lastF){
                         pathData.distance[child.x][child.y]=pathData.distance[current.x][current.y]+1;
                         pathData.parent[child.x][child.y]=directions[i];
@@ -255,6 +254,7 @@ public class SearchAlgorithms
         double resultValue = Double.MAX_VALUE;
         String resultMove = "";
         double badness = 0.0;
+        double distOfCastles = Position.getPos(myCastelpos).getDistance(Position.getPos(theirCastlePOs))/2.0;
 
         int x,y;
         for(int i=0;i<xMoves.length;i++)
@@ -263,9 +263,9 @@ public class SearchAlgorithms
             y = source.y + yMoves[i];
             if (passable(x, y))
             {
-                if (heuristic.darknessMatrix[x][y] + 4.0/(double)(new Vector2D(x,y).getDistance(theirCastlePOs)) < resultValue)
+                if (heuristic.darknessMatrix[x][y] + distOfCastles/(new Position(x,y).getDistance(Position.getPos(theirCastlePOs))) < resultValue)
                 {
-                    resultValue = heuristic.darknessMatrix[x][y] + 4.0/(source.getDistance(Position.getPos(theirCastlePOs)));
+                    resultValue = heuristic.darknessMatrix[x][y] + distOfCastles/(new Position(x,y).getDistance(Position.getPos(theirCastlePOs)));
                     resultMove = directions[i];
                 }
             }

@@ -16,8 +16,10 @@ public class ChristopherWarrior {
     SearchAlgorithms searchAlgorithms;
     Heuristics heuristics;
     int turnNumber;
-    String path;
-    PathData pathData;
+    String pathS;
+    PathData path;
+
+    static int lastDir=0;
 
     int xMoves[] = {0,0,1,-1};
     int yMoves[] = {1,-1,0,0};
@@ -40,8 +42,23 @@ public class ChristopherWarrior {
         this.heuristics = heuristics;
         this.turnNumber = turnNumber;
     }
-    public void setTask() {
-
+    public void setTask(String turnDec,int LAlimit) {
+        if(turnDec=="indanger")
+            pathS=searchAlgorithms.LRTAStar(heuristics,unit.getPos(),wm.self.agents.get(0).getPos(),LAlimit).toPath();
+        else{
+            lastDir=(lastDir+1)%4;
+            switch (lastDir){
+                case 1: pathS=searchAlgorithms.LRTAStar(heuristics,unit.getPos(),new Vector2D(wm.others.get(0).agents.get(0).getPos().x,wm.others.get(0).agents.get(0).getPos().y+1),LAlimit).toPath();
+                    break;
+                case 2: pathS=searchAlgorithms.LRTAStar(heuristics,unit.getPos(),new Vector2D(wm.others.get(0).agents.get(0).getPos().x,wm.others.get(0).agents.get(0).getPos().y-1),LAlimit).toPath();
+                    break;
+                case 3: pathS=searchAlgorithms.LRTAStar(heuristics,unit.getPos(),new Vector2D(wm.others.get(0).agents.get(0).getPos().x+1,wm.others.get(0).agents.get(0).getPos().y),LAlimit).toPath();
+                    break;
+                default: pathS=searchAlgorithms.LRTAStar(heuristics,unit.getPos(),new Vector2D(wm.others.get(0).agents.get(0).getPos().x-1,wm.others.get(0).agents.get(0).getPos().y+1),LAlimit).toPath();
+                    break;
+            }
+            System.err.println(":"+pathS);
+        }
     }
 
     public void doItsJob(){
@@ -61,8 +78,13 @@ public class ChristopherWarrior {
                     return;
                 }
         }
+        if(!pathS.equals("")) {
+            if(pathS.length()==1)
+                unit.move(Direction.valueOf(pathS));
+            else {
+                System.err.println(pathS + ":" + pathS.length());
+                unit.move(Direction.valueOf(pathS.substring(0, 1)));
 
-        unit.move(Direction.valueOf(pathData.toPath().substring(0,1)));
-
-    }
+            }
+        }}
 }

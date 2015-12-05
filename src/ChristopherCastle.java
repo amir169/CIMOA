@@ -68,6 +68,8 @@ public class ChristopherCastle {
         else
             dangerAmount=10;
 
+        dangerAmount += (double)neighboursData.theirWorkers.size()*0.3;
+
         dangerAmount *= (maxHPOfCastle - wm.self.agents.get(0).getHP() + 1);
 
 

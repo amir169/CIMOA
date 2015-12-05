@@ -26,8 +26,11 @@ public class MyAI implements PlayerAI
     int maxTurn=300;
     int zaribGetDistanceLRTAstar=7;
     int zaribMatrixCellLRTAstar=1;
-    int LRAStarINF=50;
-    int castleBfsLimit=7;
+    int LRAStarINF=10;
+    int castleBfsLimit=100;
+    int LALimit=1000000;
+
+    int MAXOP=1000000;
 
     PathData bestPasthN;
     PathData bestPasthS;
@@ -55,35 +58,31 @@ public class MyAI implements PlayerAI
     {
 
         myCastlePos=new Vector2D(wm.self.agents.get(0).getPos().x,wm.self.agents.get(0).getPos().y);
-//        if(wm.others.size()>0)
+        if(wm.others.size()>0)
             theirCastlePos =new Vector2D(wm.others.get(0).agents.get(0).getPos().x,wm.others.get(0).agents.get(0).getPos().y);
         SearchAlgorithms searchAlgorithms=new SearchAlgorithms(wm.cloneTerrain(),zaribGetDistanceLRTAstar,zaribMatrixCellLRTAstar,myCastlePos,theirCastlePos);//a
         turnNumber++;
 
         if(first){
             heuristics=new Heuristics(wm.cloneTerrain(),LRAStarINF);
-
+/*
             bestPasthE=searchAlgorithms.LRTAStar(heuristics,new Vector2D(myCastlePos.x+1,myCastlePos.y),theirCastlePos,wm.getHeight()*wm.getWidth());
             bestPasthW=searchAlgorithms.LRTAStar(heuristics,new Vector2D(myCastlePos.x-1,myCastlePos.y),theirCastlePos,wm.getHeight()*wm.getWidth());
             bestPasthN=searchAlgorithms.LRTAStar(heuristics,new Vector2D(myCastlePos.x,myCastlePos.y+1),theirCastlePos,wm.getHeight()*wm.getWidth());
             bestPasthS=searchAlgorithms.LRTAStar(heuristics,new Vector2D(myCastlePos.x,myCastlePos.y-1),theirCastlePos,wm.getHeight()*wm.getWidth());
 
             first = false;
-        }
+        */}
         ArrayList<ChristopherWorker> myWorkers=new ArrayList<>();
         ArrayList<ChristopherWarrior> myWarrior=new ArrayList<>();
 
-
-        if(turnNumber%2==0){
-
-            myCastle.unit.make(Direction.E, UnitType.WORKER);
-        }
+        searchAlgorithms.LRTAStar(heuristics, new Vector2D(3,1), new Vector2D(3,7), 900);
 
 
         initialIDMatrixAndIDMap(wm);
         initilaUnitMatrixAndData(wm);
         initialGoldMatrix(wm);
-//        determineLimits();
+        determineLimits();
         turnDecide(wm);
 
         ChristopherCastle myCastle = new ChristopherCastle(wm.self.agents.get(0),wm,unitMatrix,goldMatrix,searchAlgorithms,heuristics,turnNumber,ourWorker,wm.goldMines.size());
@@ -100,7 +99,7 @@ public class MyAI implements PlayerAI
         }
 
         for (int i = 0; i < myWarrior.size(); i++) {
-            myWarrior.get(i).setTask();
+            myWarrior.get(i).setTask(turnDecision,LALimit);
             myWarrior.get(i).doItsJob();
         }
 
@@ -109,56 +108,24 @@ public class MyAI implements PlayerAI
             myWorkers.get(i).setTask();
             myWorkers.get(i).doItsJob();
         }
+
+
+    }
+
+    private void determineLimits() {
+        if(ourWarrior==0)LALimit= MAXOP;
+        else LALimit=MAXOP/ourWarrior;
     }
 
     private void turnDecide(WorldModel wm) {
 
-        double total = maxTurn
-                ,goldCompare;
-
-        double warriorCompare =(theirWarrior==0)? 100.0 : (double)ourWarrior/(double)theirWarrior;
-        double workerCompare =(theirWorker==0)? 100.0 : (double)ourWorker/(double)theirWorker;
-
-
-        goldCompare = (double)wm.self.gold / (double)wm.others.get(0).gold;
-
-        if((double)turnNumber / total < 1.0/3.0)
-        {
-                if(goldCompare < 2.0/3.0)
-                {
-                    if(workerCompare < 0.9)
-                        turnDecision = "gaingold";
-                    else
-                        turnDecision = "savegold";
-                }
-                else
-                        turnDecision = "none";
-        }
-        else if((double)turnNumber / total < 2.0/3.0)
-        {
-            if(goldCompare < 2.0/3.0)
-            {
-                if(workerCompare < 0.9)
-                    turnDecision = "gaingold";
-                else
-                    turnDecision = "savegold";
-            }
-            else
-                turnDecision = "none";
-        }
-        else
-        {
-            if(goldCompare < 2.0/3.0)
-            {
-                if(workerCompare < 0.9)
-                    turnDecision = "gaingold";
-                else
-                    turnDecision = "savegold";
-            }
-            else
-                turnDecision = "none";
-        }
+/*        double  goldCompare = (double)wm.self.gold / (double)wm.others.get(0).gold;
+        if(turnNumber<15){turnDecision="gaingold";return;}
+        if(goldCompare>2.0)turnDecision="gaingold";
+        else turnDecision="savegold";*/
+        turnDecision="none";
     }
+
 
 
     int[][] IDMatrix;
@@ -248,3 +215,55 @@ public class MyAI implements PlayerAI
     }
     */
 }
+
+
+
+//////////////////////doturn
+/*
+
+        double total = maxTurn
+                ,goldCompare;
+
+        double warriorCompare =(theirWarrior==0)? 100.0 : (double)ourWarrior/(double)theirWarrior;
+        double workerCompare =(theirWorker==0)? 100.0 : (double)ourWorker/(double)theirWorker;
+
+
+        goldCompare = (double)wm.self.gold / (double)wm.others.get(0).gold;
+
+        if((double)turnNumber / total < 1.0/3.0)
+        {
+                if(goldCompare < 2.0/3.0)
+                {
+                    if(workerCompare < 0.9)
+                        turnDecision = "gaingold";
+                    else
+                        turnDecision = "savegold";
+                }
+                else
+                        turnDecision = "none";
+        }
+        else if((double)turnNumber / total < 2.0/3.0)
+        {
+            if(goldCompare < 2.0/3.0)
+            {
+                if(workerCompare < 0.9)
+                    turnDecision = "gaingold";
+                else
+                    turnDecision = "savegold";
+            }
+            else
+                turnDecision = "none";
+        }
+        else
+        {
+            if(goldCompare < 2.0/3.0)
+            {
+                if(workerCompare < 0.9)
+                    turnDecision = "gaingold";
+                else
+                    turnDecision = "savegold";
+            }
+            else
+                turnDecision = "none";
+        }
+*/
